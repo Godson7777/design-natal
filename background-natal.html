@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Background Natal</title>
+<style>
+  html,body{margin:0;background:#0d3b24}
+  svg{display:block;width:736px;height:1308px}
+</style>
+</head>
+<body>
+<!-- Background poster Natal 736x1308: gradasi hijau-kuning, cahaya, pohon, lampu, salju, tekstur grain -->
+<svg id="bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 736 1308">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f6b3a"/>
+      <stop offset=".45" stop-color="#5f9a2c"/>
+      <stop offset=".75" stop-color="#2f8a4a"/>
+      <stop offset="1" stop-color="#0f5a3a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".78" cy=".3" r=".55">
+      <stop offset="0" stop-color="#fff7a0" stop-opacity=".95"/>
+      <stop offset=".35" stop-color="#d9e65a" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#d9e65a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="tealGlow" cx=".1" cy=".85" r=".5">
+      <stop offset="0" stop-color="#6fe0c0" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#6fe0c0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tree" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3fae5f"/>
+      <stop offset="1" stop-color="#1c7a45"/>
+    </linearGradient>
+    <filter id="blur20"><feGaussianBlur stdDeviation="20"/></filter>
+    <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="bulb" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 .22"/></feComponentTransfer>
+    </filter>
+    <clipPath id="treeClip"><path d="M590 450 L1000 1308 L180 1308 Z"/></clipPath>
+  </defs>
+
+  <!-- langit -->
+  <rect width="736" height="1308" fill="url(#sky)"/>
+  <rect width="736" height="1308" fill="url(#glow)"/>
+  <rect width="736" height="1308" fill="url(#tealGlow)"/>
+  <!-- lengkungan cahaya di atas -->
+  <path d="M-50 60 Q380 -40 760 260" stroke="#e8f07a" stroke-width="70" fill="none" opacity=".35" filter="url(#blur20)"/>
+
+  <!-- jejak cahaya emas (kiri) -->
+  <g fill="none" stroke="#f5d860" stroke-linecap="round" filter="url(#blur6)" opacity=".8">
+    <path d="M0 560 Q160 520 300 470" stroke-width="10"/>
+    <path d="M0 620 Q170 560 320 490" stroke-width="6"/>
+    <path d="M0 700 Q180 620 340 520" stroke-width="14"/>
+  </g>
+
+  <!-- pohon -->
+  <g>
+    <path d="M590 450 L1000 1308 L180 1308 Z" fill="url(#tree)"/>
+    <g clip-path="url(#treeClip)" fill="#155c33" opacity=".85">
+      <path d="M300 760 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 l0 40 l-420 0 z"/>
+      <path d="M220 1000 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 l0 40 l-540 0 z"/>
+      <path d="M150 1220 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 q30 30 60 0 l0 40 l-600 0 z"/>
+    </g>
+    <!-- bintang -->
+    <g filter="url(#bulb)">
+      <path d="M580 318 l17 40 43 3 -33 28 11 42 -38 -23 -38 23 11 -42 -33 -28 43 -3 z" fill="#ffe96a"/>
+    </g>
+  </g>
+
+  <!-- garland & lampu (dibuat lewat script) -->
+  <g id="lights" clip-path="url(#treeClip)"></g>
+  <g id="snow"></g>
+
+  <!-- tekstur grain -->
+  <rect width="736" height="1308" filter="url(#grain)"/>
+
+<script>
+  const NS='http://www.w3.org/2000/svg';
+  const L=document.getElementById('lights');
+  const garlands=[[360,700,760,600],[240,950,760,860],[160,1170,760,1080]];
+  let seed=7; const rnd=()=>((seed=seed*16807%2147483647)/2147483647);
+  garlands.forEach(([x1,y1,x2,y2])=>{
+    const mx=(x1+x2)/2, my=(y1+y2)/2+50;
+    const p=document.createElementNS(NS,'path');
+    p.setAttribute('d',`M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`);
+    p.setAttribute('stroke','#f2dc4a');p.setAttribute('stroke-width','4');p.setAttribute('fill','none');
+    L.appendChild(p);
+    for(let t=0.04;t<1;t+=0.075){
+      const x=(1-t)**2*x1+2*(1-t)*t*mx+t*t*x2, y=(1-t)**2*y1+2*(1-t)*t*my+t*t*y2;
+      const c=document.createElementNS(NS,'circle');
+      c.setAttribute('cx',x);c.setAttribute('cy',y+12);c.setAttribute('r',6);
+      c.setAttribute('fill','#fff6b0');c.setAttribute('filter','url(#bulb)');
+      L.appendChild(c);
+    }
+  });
+  const S=document.getElementById('snow');
+  for(let i=0;i<70;i++){
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',rnd()*736);c.setAttribute('cy',rnd()*1308);
+    c.setAttribute('r',(rnd()*2.5+.8).toFixed(1));
+    c.setAttribute('fill','#fff');c.setAttribute('opacity',(rnd()*.6+.3).toFixed(2));
+    S.appendChild(c);
+  }
+</script>
+</svg>
+</body>
+</html>
